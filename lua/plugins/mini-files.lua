@@ -185,13 +185,23 @@ return {
             vim.api.nvim_create_autocmd('User', {
                 pattern = 'MiniFilesExplorerOpen',
                 callback = function()
+                    -- LINUX CONFIG
                     set_mark('c', vim.fn.stdpath 'config', 'Config') -- path
                     set_mark('w', vim.fn.getcwd, 'Working directory') -- callable
                     set_mark('~', '/home/thomas', 'Home directory')
                     set_mark('.', set_source_dir(vim.fn.getcwd()), 'Src directory')
-                    set_mark('g', '/home/thomas/Github', 'Home directory')
-                    set_mark('l', '/home/thomas/Code/Local', 'Home directory')
-                    set_mark('p', '/home/thomas/Code/Projects', 'Home directory')
+                    set_mark('g', '/home/thomas/Github', 'Github')
+                    set_mark('l', '/home/thomas/Code/Local', 'Local Projects')
+                    set_mark('p', '/home/thomas/Code/Projects', 'Projects')
+
+                    -- Mac Config
+                    -- set_mark('c', vim.fn.stdpath 'config', 'Config') -- path
+                    -- set_mark('w', vim.fn.getcwd, 'Working directory') -- callable
+                    -- set_mark('~', '/Users/thomaskatter', 'Home directory')
+                    -- set_mark('.', set_source_dir(vim.fn.getcwd()), 'Src directory')
+                    -- set_mark('g', '/Users/thomaskatter/Code/Github', 'Github')
+                    -- set_mark('l', '/Users/thomaskatter/Code/Local', 'Local Projects')
+                    -- set_mark('p', '/Users/thomaskatter/Code/Projects', 'Projects')
                 end,
             })
             -- vim.api.nvim_create_autocmd('User', {
