@@ -19,6 +19,8 @@ return {
                     'css',
                     'dockerfile',
                     'dot',
+                    'elixir',
+                    'heex',
                     'git_config',
                     'git_rebase',
                     'gitattributes',

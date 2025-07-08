@@ -28,9 +28,9 @@ function M.render()
         local special_dirs = {
             CODE = vim.g.projects_dir,
             CONFIGS = vim.env.XDG_CONFIG_HOME,
-            GIT = vim.g.main_projects,
+            PROJECTS = vim.g.main_projects,
             HOME = vim.env.HOME,
-            PERSONAL = vim.g.local_projects,
+            LOCAL = vim.g.local_projects,
         }
         for dir_name, dir_path in pairs(special_dirs) do
             if vim.startswith(path, vim.fs.normalize(dir_path)) and #dir_path > #prefix_path then

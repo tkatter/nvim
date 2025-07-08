@@ -24,7 +24,7 @@ end
 local set_source_dir = function(path)
     local src_path = join_paths(path, 'src')
 
-    print('Source path:', src_path)
+    -- print('Source path:', src_path)
     local path_is_dir = function(path)
         local stat = vim.loop.fs_stat(path)
 
@@ -83,16 +83,16 @@ return {
             {
                 '<leader>e',
                 function()
-                    --     local bufname = vim.api.nvim_buf_get_name(0)
-                    --     local path = vim.fn.fnamemodify(bufname, ':p')
-                    --
-                    --     -- Noop if the buffer isn't valid.
-                    --     if path and vim.uv.fs_stat(path) then
-                    --         require('mini.files').open(bufname, false)
-                    --     end
-                    require('mini.files').open()
+                    local bufname = vim.api.nvim_buf_get_name(0)
+                    -- local path = vim.fn.fnamemodify(bufname, ':p')
+                    local dir_path = vim.fn.fnamemodify(bufname, ':p:h')
+
+                    if dir_path and vim.uv.fs_stat(dir_path) then
+                        vim.g.current_working_dir = dir_path
+                        require('mini.files').open(dir_path, false)
+                    end
                 end,
-                desc = 'File explorer',
+                desc = 'Open Mini Files',
             },
         },
         opts = {
@@ -186,12 +186,12 @@ return {
                 pattern = 'MiniFilesExplorerOpen',
                 callback = function()
                     set_mark('c', vim.fn.stdpath 'config', 'Config') -- path
-                    set_mark('w', vim.fn.getcwd, 'Working directory') -- callable
+                    set_mark('w', vim.g.current_working_dir, 'Working directory') -- callable
                     set_mark('~', '/home/thomas', 'Home directory')
                     set_mark('.', set_source_dir(vim.fn.getcwd()), 'Src directory')
-                    set_mark('g', '/home/thomas/Github', 'Home directory')
-                    set_mark('l', '/home/thomas/Code/Local', 'Home directory')
-                    set_mark('p', '/home/thomas/Code/Projects', 'Home directory')
+                    set_mark('g', '/home/thomas/Github', 'Git directory')
+                    set_mark('l', '/home/thomas/Code/Local', 'Local Projects')
+                    set_mark('p', '/home/thomas/Code/Projects', 'Main Projects')
                 end,
             })
             -- vim.api.nvim_create_autocmd('User', {
