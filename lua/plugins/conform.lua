@@ -7,6 +7,8 @@ return {
             notify_on_error = false,
             formatters_by_ft = {
                 c = { name = 'clangd', timeout_ms = 500, lsp_format = 'prefer' },
+                css = { 'prettier' },
+                heex = { 'prettier' },
                 javascript = { 'prettier', name = 'dprint', timeout_ms = 500, lsp_format = 'fallback' },
                 javascriptreact = { 'prettier', name = 'dprint', timeout_ms = 500, lsp_format = 'fallback' },
                 json = { 'prettier', name = 'dprint', timeout_ms = 500, lsp_format = 'fallback' },

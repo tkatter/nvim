@@ -226,6 +226,8 @@ return {
                 eslint = {},
                 bashls = {},
                 jsonls = {},
+                -- cssls = {},
+                tailwindcss = {},
                 html = {},
                 marksman = {},
                 superhtml = {},
