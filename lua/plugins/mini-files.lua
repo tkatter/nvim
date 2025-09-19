@@ -186,12 +186,11 @@ return {
                 pattern = 'MiniFilesExplorerOpen',
                 callback = function()
                     set_mark('c', vim.fn.stdpath 'config', 'Config') -- path
-                    set_mark('w', vim.g.current_working_dir, 'Working directory') -- callable
+                    set_mark('w', vim.fn.getcwd(), 'Working directory') -- callable
                     set_mark('~', '/home/thomas', 'Home directory')
                     set_mark('.', set_source_dir(vim.fn.getcwd()), 'Src directory')
-                    set_mark('g', '/home/thomas/Github', 'Git directory')
-                    set_mark('l', '/home/thomas/Code/Local', 'Local Projects')
-                    set_mark('p', '/home/thomas/Code/Projects', 'Main Projects')
+                    -- set_mark('l', '/home/thomas/Code/Local', 'Local Projects')
+                    -- set_mark('p', '/home/thomas/Code/Projects', 'Main Projects')
                 end,
             })
             -- vim.api.nvim_create_autocmd('User', {
