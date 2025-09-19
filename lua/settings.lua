@@ -16,6 +16,9 @@ vim.opt.listchars = { space = '⋅', trail = '⋅', tab = '  ↦' }
 -- Show line numbers.
 vim.wo.number = true
 
+-- Set columncolor at col 80
+vim.opt.colorcolumn = '80'
+
 -- Enable mouse mode.
 vim.o.mouse = 'a'
 

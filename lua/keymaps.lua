@@ -48,7 +48,7 @@ vim.keymap.set('n', '<A-L>', '<C-W>L', { desc = 'Move window right', remap = tru
 vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<cr>', { desc = 'Close tab page' })
 vim.keymap.set('n', '<leader>tn', '<cmd>tab split<cr>', { desc = 'New tab page' })
 vim.keymap.set('n', '<leader>to', '<cmd>tabonly<cr>', { desc = 'Close other tab pages' })
-vim.keymap.set('n', '<leader>tt', '<cmd>tabnext<cr>', { desc = 'Close other tab pages' })
+vim.keymap.set('n', '<leader>tt', '<cmd>tabnext<cr>', { desc = 'Next tab' })
 
 -- Poweful <esc>.
 -- vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
