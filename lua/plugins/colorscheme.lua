@@ -1,7 +1,8 @@
 -- https://catbbrew.com/design
 return {
     'catppuccin/nvim',
-    lazy = false,
+    event = 'VimEnter',
+    lazy = true,
     name = 'catppuccin',
     priority = 1000,
     opts = {
@@ -69,17 +70,6 @@ return {
                 --         -- crust = '#666666',
             },
         },
-    },
-    specs = {
-        -- {
-        --     'akinsho/bufferline.nvim',
-        --     optional = true,
-        --     opts = function(_, opts)
-        --         if (vim.g.colors_name or ''):find 'catppuccin' then
-        --             opts.highlights = require('catppuccin.groups.integrations.bufferline').get()
-        --         end
-        --     end,
-        -- },
     },
     -- This actually calls the colorscheme.
     config = function(_, opts)

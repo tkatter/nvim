@@ -1,5 +1,6 @@
 return {
     'ibhagwan/fzf-lua',
+    lazy = true,
     dependencies = { 'echasnovski/mini.icons' },
     opts = {
         winopts = {
@@ -30,7 +31,7 @@ return {
 
     -- Registers fzf with vim.ui.select
     -- removes annoying notifications from snacks.nvim
-    init = function()
+    config = function()
         require('fzf-lua').register_ui_select()
     end,
 }

@@ -16,7 +16,7 @@ vim.api.nvim_create_user_command('Todos', function()
 end, { desc = 'Grep TODOs', nargs = 0 })
 
 vim.api.nvim_create_user_command('Scratch', function()
-    vim.cmd 'bel 10new'
+    vim.cmd 'bel 30new'
     local buf = vim.api.nvim_get_current_buf()
     for name, value in pairs {
         filetype = 'scratch',

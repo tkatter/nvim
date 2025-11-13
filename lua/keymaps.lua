@@ -50,15 +50,6 @@ vim.keymap.set('n', '<leader>tn', '<cmd>tab split<cr>', { desc = 'New tab page' 
 vim.keymap.set('n', '<leader>to', '<cmd>tabonly<cr>', { desc = 'Close other tab pages' })
 vim.keymap.set('n', '<leader>tt', '<cmd>tabnext<cr>', { desc = 'Next tab' })
 
--- Poweful <esc>.
--- vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
--- if require('luasnip').expand_or_jumpable() then
--- require('luasnip').unlink_current()
--- end
--- vim.cmd 'noh'
--- return '<esc>'
--- end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
-
 -- Make U opposite to u.
 vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
 
@@ -82,3 +73,8 @@ vim.keymap.set('c', 'dm', 'delmarks', { desc = 'Delete marks' })
 
 -- Yank line in visual mode.
 vim.keymap.set('v', 'Y', [[:<C-u>let @+=join(getline("'<", "'>"), "\n")<cr>]], { desc = 'Yank line(s) to clipboard' })
+
+-- Pull up the nvim index of commands
+vim.keymap.set('n', '<F2>', function()
+    vim.cmd 'tab help index'
+end, { desc = 'Open help index in a new tab', remap = true })

@@ -1,15 +1,12 @@
 return {
-  'MeanderingProgrammer/render-markdown.nvim',
-  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },   -- if you use the mini.nvim suite
-  dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' },   -- if you use standalone mini plugins
-  ft = 'markdown',
-  -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-  ---@module 'render-markdown'
-  ---@type render.md.UserConfig
-  opts = {
-    completions = { blink = { enabled = true } },
-  },
-  config = function(_, opts)
-    require('render-markdown').setup(opts)
-  end,
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' },
+    ft = 'markdown',
+    lazy = true,
+    opts = {
+        completions = { blink = { enabled = true } },
+    },
+    config = function(_, opts)
+        require('render-markdown').setup(opts)
+    end,
 }

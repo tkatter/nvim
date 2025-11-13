@@ -59,4 +59,3 @@ vim.on_key(function(_, typed)
         end
     end)
 end, ns)
-

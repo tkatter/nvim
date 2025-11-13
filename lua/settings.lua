@@ -4,7 +4,7 @@ local arrows = require('icons').arrows
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Indentation (4 spaces).
+-- Indentation (2 spaces).
 vim.o.sw = 2
 vim.o.ts = 2
 vim.o.et = true
@@ -25,8 +25,8 @@ vim.o.mouse = 'a'
 -- Disable horizontal scrolling.
 vim.o.mousescroll = 'ver:3,hor:0'
 
--- Wrap long lines at words.
-vim.o.linebreak = true
+-- No line wrapping
+vim.o.linebreak = false
 
 -- Folding
 vim.o.foldcolumn = '1'
@@ -36,7 +36,7 @@ vim.o.foldtext = ''
 -- UI characters.
 vim.opt.fillchars = {
     eob = ' ',
-    fold = ' ',
+    fold = '-',
     foldclose = arrows.right,
     foldopen = arrows.down,
     foldsep = ' ',
@@ -47,7 +47,7 @@ vim.opt.fillchars = {
 vim.o.winborder = 'rounded'
 
 -- Sync clipboard between the OS and Neovim.
-vim.o.clipboard = 'unnamedplus'
+vim.o.clipboard = vim.env.SSH_CONNECTION and '' or 'unnamedplus'
 
 -- Save undo history.
 vim.o.undofile = true

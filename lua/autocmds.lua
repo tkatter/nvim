@@ -1,5 +1,3 @@
--- NOTE: Ordered alphabetically by group name.
-
 vim.api.nvim_create_autocmd('FileType', {
     group = vim.api.nvim_create_augroup('tkatter/big_file', { clear = true }),
     desc = 'Disable features in big files',
@@ -26,33 +24,6 @@ vim.api.nvim_create_autocmd('FileType', {
     end,
 })
 
--- im.api.nvim_create_autocmd('VimEnter', {
--- group = vim.api.nvim_create_augroup('tkatter/dotfiles_setup', { clear = true }),
--- desc = 'Special dotfiles setup',
--- callback = function()
--- local ok, inside_dotfiles = pcall(vim.startswith, vim.fn.getcwd(), vim.env.XDG_CONFIG_HOME)
--- if not ok or not inside_dotfiles then
--- return
--- end
-
--- Configure git environment.
--- vim.env.GIT_WORK_TREE = vim.env.HOME
--- vim.env.GIT_DIR = vim.env.HOME .. '/.cfg'
--- end,
--- })
-
--- vim.api.nvim_create_autocmd('BufReadPost', {
---     group = vim.api.nvim_create_augroup('tkatter/last_location', { clear = true }),
---     desc = 'Go to the last location when opening a buffer',
---     callback = function(args)
---         local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
---         local line_count = vim.api.nvim_buf_line_count(args.buf)
---         if mark[1] > 0 and mark[1] <= line_count then
---             vim.cmd 'normal! g`"zz'
---         end
---     end,
--- })
---
 local line_numbers_group = vim.api.nvim_create_augroup('tkatter/toggle_line_numbers', {})
 vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'CmdlineLeave', 'WinEnter' }, {
     group = line_numbers_group,
@@ -63,6 +34,7 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'Cmdline
         end
     end,
 })
+
 vim.api.nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEnter', 'WinLeave' }, {
     group = line_numbers_group,
     desc = 'Toggle relative line numbers off',
@@ -79,7 +51,16 @@ vim.api.nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEn
         end
     end,
 })
---
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+    group = vim.api.nvim_create_augroup('tkatter/yank_highlight', { clear = true }),
+    desc = 'Highlight on yank',
+    callback = function()
+        -- Setting a priority higher than the LSP references one.
+        vim.hl.on_yank { higroup = 'Visual', priority = 250 }
+    end,
+})
+
 -- vim.api.nvim_create_autocmd('FileType', {
 --     group = vim.api.nvim_create_augroup('tkatter/treesitter_folding', { clear = true }),
 --     desc = 'Enable Treesitter folding',
@@ -100,12 +81,3 @@ vim.api.nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'CmdlineEn
 --         end
 --     end,
 -- })
-
-vim.api.nvim_create_autocmd('TextYankPost', {
-    group = vim.api.nvim_create_augroup('tkatter/yank_highlight', { clear = true }),
-    desc = 'Highlight on yank',
-    callback = function()
-        -- Setting a priority higher than the LSP references one.
-        vim.hl.on_yank { higroup = 'Visual', priority = 250 }
-    end,
-})

@@ -3,6 +3,7 @@ return {
     {
         'stevearc/conform.nvim',
         event = 'BufWritePre',
+        lazy = true,
         opts = {
             notify_on_error = false,
             formatters_by_ft = {
@@ -47,11 +48,6 @@ return {
                     timeout_ms = 500,
                 }
             end,
-            formatters = {
-                -- MAYBE??
-                -- Require a Prettier configuration file to format.
-                -- prettier = { require_cwd = true },
-            },
         },
         init = function()
             -- Use conform for gq.
