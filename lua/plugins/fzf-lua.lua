@@ -22,6 +22,7 @@ return {
         { 'gw', '<cmd>FzfLua grep_cword<cr>', desc = 'Grep word under cursor' },
         { 'gW', '<cmd>FzfLua grep_cWORD<cr>', desc = 'Grep WORD under cursor' },
         { '<leader>fd', '<cmd>FzfLua diagnostics_document<cr>', desc = 'Find document diagnostics' },
+        { '<leader>fD', '<cmd>FzfLua diagnostics_workspace<cr>', desc = 'Find workspace diagnostics' },
         { '<leader>fs', '<cmd>FzfLua lsp_document_symbols<cr>', desc = 'Find document symbols' },
         { '<leader>fS', '<cmd>FzfLua lsp_live_workspace_symbols<cr>', desc = 'Find workspace symbols' },
         { 'gca', '<cmd>FzfLua lsp_code_actions<cr>', desc = 'Code actions' },

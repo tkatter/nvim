@@ -231,6 +231,7 @@ return {
                 html = {},
                 marksman = {},
                 superhtml = {},
+                postgres_lsp = {},
                 lua_ls = {
                     -- cmd = { ... },
                     -- filetypes = { ... },
