@@ -6,7 +6,15 @@ vim.lsp.config('rust_analyzer', {
     root_markers = { { 'Cargo.toml' }, '.git' },
 
     settings = {
-        ['rust-analyzer'] = {},
+        ['rust-analyzer'] = {
+            -- Disable 'inactive-code' warnings for disabled #[cfg(feature)]s
+            diagnostics = {
+                disabled = { 'inactive-code' },
+            },
+            check = {
+                command = 'clippy',
+            },
+        },
     },
 })
 
@@ -16,12 +24,8 @@ vim.lsp.config('bashls', {
     cmd = { 'bash-language-server', 'start' },
     settings = {
         bashIde = {
-            -- Glob pattern for finding and parsing shell script files in the workspace.
-            -- Used by the background analysis features across files.
-
             -- Prevent recursive scanning which will cause issues when opening a file
             -- directly in the home directory (e.g. ~/foo.sh).
-            --
             -- Default upstream pattern is "**/*@(.sh|.inc|.bash|.command)".
             globPattern = vim.env.GLOB_PATTERN or '*@(.sh|.inc|.bash|.command)',
         },
@@ -71,18 +75,9 @@ vim.lsp.config('lua_ls', {
                 checkThirdParty = false,
                 library = {
                     vim.env.VIMRUNTIME,
-                    -- Depending on the usage, you might want to add additional paths
-                    -- here.
                     '${3rd}/luv/library',
                     -- '${3rd}/busted/library'
                 },
-                -- Or pull in all of 'runtimepath'.
-                -- NOTE: this is a lot slower and will cause issues when working on
-                -- your own configuration.
-                -- See https://github.com/neovim/nvim-lspconfig/issues/3189
-                -- library = {
-                --   vim.api.nvim_get_runtime_file('', true),
-                -- }
             },
         })
     end,
@@ -146,3 +141,6 @@ vim.diagnostic.config {
         end,
     },
 }
+
+vim.lsp.config('clangd', require 'clang')
+vim.lsp.enable 'clangd'
