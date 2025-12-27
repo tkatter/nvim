@@ -23,7 +23,11 @@ return {
         event = { 'VeryLazy', 'BufRead' },
         lazy = true,
         dependencies = { 'nvim-lua/plenary.nvim' },
-        opts = {},
+        opts = {
+            keywords = {
+                SAFETY = { icon = '', color = 'warning' },
+            },
+        },
     },
     {
         'folke/snacks.nvim',
