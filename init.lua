@@ -2,6 +2,9 @@ vim.g.projects_dir = vim.env.HOME .. '/Code'
 
 -- Install Lazy.
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+local parsers = vim.fn.stdpath 'data' .. '/site'
+vim.opt.rtp:prepend(lazypath)
+vim.opt.rtp:prepend(parsers)
 if not vim.uv.fs_stat(lazypath) then
     vim.fn.system {
         'git',
@@ -12,8 +15,6 @@ if not vim.uv.fs_stat(lazypath) then
         lazypath,
     }
 end
-
-vim.opt.rtp:prepend(lazypath)
 
 ---@type LazySpec
 local plugins = 'plugins'
