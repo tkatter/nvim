@@ -31,7 +31,7 @@ return {
 
             -- Useful status updates for LSP.
             { 'j-hui/fidget.nvim', opts = {} },
-
+            { 'elixir-tools/elixir-tools.nvim' },
             -- Allows extra capabilities provided by blink.cmp
             'saghen/blink.cmp',
         },
@@ -229,6 +229,7 @@ return {
                 html = {},
                 marksman = {},
                 superhtml = {},
+                tailwindcss = {},
                 lua_ls = {
                     -- cmd = { ... },
                     -- filetypes = { ... },
@@ -282,6 +283,7 @@ return {
                     end,
                 },
             }
+            require('custom-elixir-lsp').setup()
         end,
     },
 }

@@ -4,10 +4,10 @@ local arrows = require('icons').arrows
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Indentation (4 spaces).
-vim.o.sw = 2
-vim.o.ts = 2
-vim.o.et = true
+-- Indentation (2 spaces).
+vim.o.shiftwidth = 2
+vim.o.tabstop = 2
+vim.o.expandtab = true
 
 -- Show whitespace.
 vim.opt.list = true

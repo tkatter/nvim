@@ -1,7 +1,62 @@
--- Global variables. (linux)
-vim.g.projects_dir = vim.env.HOME .. '/Code'
-vim.g.local_projects = vim.g.projects_dir .. '/Local'
-vim.g.main_projects = vim.g.projects_dir .. '/Projects'
+local cwd = vim.fn.getcwd()
+local special_dir = "/Volumes/school"
+vim.g.projects_dir = vim.env.HOME .. "/code"
+vim.g.school_dir = special_dir .. "/obsidian"
+
+if cwd:find(vim.pesc(special_dir), 1, true) == 1 then
+  require 'settings'
+  require 'keymaps'
+  require 'commands'
+  require 'autocmds'
+  require 'winbar'
+  require 'marks'
+
+  vim.opt.colorcolumn="80"
+  vim.opt.tgc=true
+
+  -- vim.api.nvim_create_autocmd('FileType', {
+  --   pattern = { 'c' },
+  --   callback = function()
+  --     vim.opt.shiftwidth=4
+  --     vim.treesitter.start()
+  --     vim.api.nvim_set_hl(0, '@function.c', {
+  --       fg = "#f5c2e7",
+  --     })
+  --   end
+  -- })
+
+  -- vim.api.nvim_create_autocmd('FileType', {
+  --   pattern = { 'markdown' },
+  --   callback = function()
+  --     vim.opt.formatprg="fmt 72"
+  --     vim.treesitter.start()
+  --     vim.api.nvim_set_hl(0, 'Title', {
+  --       fg = "LightMagenta",
+  --       bold = true,
+  --     })
+  --     vim.api.nvim_set_hl(0, '@constant.bash', {
+  --       fg = "#94e2d5",
+  --     })
+  --     vim.api.nvim_set_hl(0, '@markup.raw.block.markdown', {
+  --       fg = "#f9e2af",
+  --     })
+  --     vim.api.nvim_set_hl(0, 'Function', {
+  --       fg = "#f5c2e7",
+  --     })
+  --     vim.api.nvim_set_hl(0, '@markup.strong', {
+  --       fg = "LightBlue",
+  --       bold = true,
+  --     })
+  --     vim.api.nvim_set_hl(0, '@markup.italic', {
+  --       fg = "LightGreen",
+  --       italic = true,
+  --     })
+  --   end
+  -- })
+
+  return
+end
+
 
 -- Install Lazy.
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

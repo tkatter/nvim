@@ -1,5 +1,4 @@
 local folder_icon = require('icons').symbol_kinds.Folder
-
 local M = {}
 
 --- Window bar that shows the current file path (in a fancy way).
@@ -28,9 +27,8 @@ function M.render()
         local special_dirs = {
             CODE = vim.g.projects_dir,
             CONFIGS = vim.env.XDG_CONFIG_HOME,
-            GIT = vim.g.main_projects,
             HOME = vim.env.HOME,
-            PERSONAL = vim.g.local_projects,
+            SCHOOL = vim.g.school_dir,
         }
         for dir_name, dir_path in pairs(special_dirs) do
             if vim.startswith(path, vim.fs.normalize(dir_path)) and #dir_path > #prefix_path then

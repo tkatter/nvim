@@ -12,15 +12,6 @@ vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous result' })
 vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
--- Formatting.
-vim.keymap.set('n', 'gQ', 'mzgggqG`z<cmd>delmarks z<cr>zz', { desc = 'Format buffer' })
-vim.keymap.set('n', '<leader>cf', function()
-    require('conform').format { lsp_format = 'fallback', timeout_ms = 500 }
-end, { desc = 'Format code (conform)' })
-
--- Open the package manager.
-vim.keymap.set('n', '<leader>L', '<cmd>Lazy<cr>', { desc = 'Lazy' })
-
 -- Buffer management.
 vim.keymap.set('n', '<leader>bd', '<cmd>bd<cr>', { desc = 'Delete current buffer' })
 vim.keymap.set('n', 'L', '<cmd>bN<cr>', { desc = 'Go to next buffer' })
@@ -45,37 +36,21 @@ vim.keymap.set('n', '<A-H>', '<C-W>H', { desc = 'Move window left', remap = true
 vim.keymap.set('n', '<A-L>', '<C-W>L', { desc = 'Move window right', remap = true })
 
 -- Tab navigation.
-vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<cr>', { desc = 'Close tab page' })
-vim.keymap.set('n', '<leader>tn', '<cmd>tab split<cr>', { desc = 'New tab page' })
+vim.keymap.set('n', '<leader>tx', '<cmd>tabclose<cr>', { desc = 'Close tab' })
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<cr>', { desc = 'New empty tab' })
+vim.keymap.set('n', '<leader>ts', '<cmd>tab split<cr>', { desc = 'Split to new tab' })
 vim.keymap.set('n', '<leader>to', '<cmd>tabonly<cr>', { desc = 'Close other tab pages' })
 vim.keymap.set('n', '<leader>tt', '<cmd>tabnext<cr>', { desc = 'Close other tab pages' })
-
--- Poweful <esc>.
--- vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
--- if require('luasnip').expand_or_jumpable() then
--- require('luasnip').unlink_current()
--- end
--- vim.cmd 'noh'
--- return '<esc>'
--- end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
 -- Make U opposite to u.
 vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
 
 -- Escape and save changes.
-vim.keymap.set({ 's', 'i', 'n', 'v' }, '<C-s>', '<esc>:w<cr>', { desc = 'Exit insert mode and save changes' })
-vim.keymap.set({ 's', 'i', 'n', 'v' }, '<C-S-s>', function()
-    vim.g.skip_formatting = true
-    return '<esc>:w<cr>'
-end, { desc = 'Exit insert mode and save changes (without formatting)', expr = true })
+vim.keymap.set({ 's', 'i', 'n', 'v' }, '<C-s>', '<esc>:w<cr>',
+  { desc = 'Exit insert mode and save changes' })
 
 -- Quickly go to the end of the line while in insert mode.
 vim.keymap.set({ 'i', 'c' }, '<C-l>', '<C-o>A', { desc = 'Go to the end of the line' })
-
--- Floating terminal.
-vim.keymap.set({ 'n', 't' }, '<leader>T', function()
-    require('float_term').float_term('bash', { cwd = vim.fn.expand '%:p:h' })
-end, { desc = 'Toggle floating terminal' })
 
 -- Mark management.
 vim.keymap.set('c', 'dm', 'delmarks', { desc = 'Delete marks' })
