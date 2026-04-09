@@ -10,6 +10,17 @@ vim.lsp.config('lua_ls', {
       end
     end
 
+    local lua_libs = vim.api.nvim_get_runtime_file("", true)
+    local os = require('luv').os_uname()
+
+    if os['sysname'] == 'Linux' then
+      lua_libs = vim.tbl_extend('keep',
+        { '/opt/lua-language-server/meta/3rd/luv/library' }, lua_libs)
+    end
+    if os['sysname'] == 'Darwin' then
+      lua_libs = vim.tbl_extend('keep', { '${3rd}/luv/library' }, lua_libs)
+    end
+
     client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
       runtime = {
         -- Tell the language server which version of Lua you're using (most
@@ -25,15 +36,17 @@ vim.lsp.config('lua_ls', {
       -- Make the server aware of Neovim runtime files
       workspace = {
         checkThirdParty = false,
-        library = {
-          vim.env.VIMRUNTIME,
-          '${3rd}/luv/library',
-          -- '${3rd}/busted/library'
-        },
+        library = lua_libs,
       },
     })
   end,
-  cmd = { 'lua-language-server' },
+  cmd = {
+    'lua-language-server',
+    '--logpath',
+    '/home/thomas/.cache/lua_ls',
+    '--metapath',
+    '/home/thomas/.cache/lua_ls/meta/',
+  },
   root_markers = { 'stylua.toml', '.git' },
   filetypes= { 'lua' },
   settings = {
