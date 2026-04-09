@@ -75,20 +75,32 @@ vim.api.nvim_create_autocmd('FileType', {
       setlocal shellpipe=2>&1\ >
     ]])
 
-  local ns = vim.api.nvim_create_namespace("shellcheck")
+  -- NOTE: prior to #35330 `buf` was `buffer`
+  -- So on neovim v0.12-0.12.1 and lower use `buffer`
+  -- https://github.com/neovim/neovim/pull/35330
 
+  -- Turn ':make' results into diagnostics from shellcheck
+  local ns = vim.api.nvim_create_namespace("shellcheck")
   vim.api.nvim_create_autocmd('QuickFixCmdPost', {
-    -- NOTE: prior to #35330 `buf` was `buffer`
-    -- So on neovim v0.12-0.12.1 and lower use `buffer`
-    -- https://github.com/neovim/neovim/pull/35330
     -- buf = ev.buf,
     buffer = ev.buf,
     callback = function()
       local qf = vim.fn.getqflist()
       local diags = vim.diagnostic.fromqflist(qf)
       vim.diagnostic.set(ns, ev.buf, diags)
-      vim.cmd('call setqflist([], \'r\')')
+      vim.fn.setqflist({}, 'r')
     end
   })
+
+  vim.api.nvim_create_autocmd('BufWritePost', {
+    -- buf = ev.buf,
+    buffer = ev.buf,
+    command = 'make',
+  })
+
+  -- Hacky BufEnter
+  -- call shellcheck after all the setup on initial
+  -- entry to populate diagnostics (if any)
+  vim.cmd('make')
   end
 })
