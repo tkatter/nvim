@@ -49,11 +49,42 @@ require('vim._core.ui2').enable({
   },
 })
 
-require 'lsp.rust'
 require 'lsp.lua_ls'
+require 'lsp.rust'
 require 'diagnostics'
 require 'align'
 
+-- CTRL_s speed-save
+vim.keymap.set({'i', 'v', 'n'}, '<C-s>', '<esc>:w<cr>')
+
+-- haven't figured out how to get this to work
 vim.keymap.set('i', '<c-space>', function()
   vim.lsp.completion.get()
 end)
+
+-- Treesitter/Diagnostics for sh/bash scripts
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {'sh', 'bash'},
+  callback = function(ev)
+    if vim.treesitter.language.add('bash') then
+      vim.treesitter.start(ev.buf, 'bash')
+    end
+
+    vim.cmd([[
+      setlocal makeprg=shellcheck\ -f\ gcc\ %
+      setlocal shellpipe=2>&1\ >
+    ]])
+
+  local ns = vim.api.nvim_create_namespace("shellcheck")
+
+  vim.api.nvim_create_autocmd('QuickFixCmdPost', {
+    buf = ev.buf,
+    callback = function()
+      local qf = vim.fn.getqflist()
+      local diags = vim.diagnostic.fromqflist(qf)
+      vim.diagnostic.set(ns, ev.buf, diags)
+      vim.cmd('call setqflist([], \'r\')')
+    end
+  })
+  end
+})
