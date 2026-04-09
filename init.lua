@@ -32,7 +32,7 @@ require('lazy').setup(plugins, {
     install = {
         -- Do not automatically install on startup
         -- Set to true and restart nvim as needed
-        missing = true,
+        missing = false,
         colorscheme = { 'colorscheme' },
     },
     change_detection = {

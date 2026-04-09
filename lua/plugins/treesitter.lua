@@ -36,6 +36,7 @@ return {
                 'markdown',
                 'markdown_inline',
                 'rust',
+                'slint',
                 'ssh_config',
                 'styled',
                 'superhtml',

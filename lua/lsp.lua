@@ -21,6 +21,12 @@ vim.lsp.config('rust_analyzer', {
     root_markers = { { 'Cargo.toml' }, '.git' },
     settings = {
         ['rust-analyzer'] = {
+            -- imports = {
+            --     granularity = {
+            --         enforce = true,
+            --         group = 'item',
+            --     },
+            -- },
             -- Disable 'inactive-code' warnings for disabled #[cfg(feature)]s
             diagnostics = {
                 disabled = { 'inactive-code' },

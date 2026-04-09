@@ -62,7 +62,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = { 'rust', 'just', 'bash', 'sh', 'markdown', 'c', 'h' },
+    pattern = { 'awk', 'rust', 'just', 'bash', 'sh', 'markdown', 'c', 'h', 'slint' },
     callback = function()
         -- syntax highlighting, provided by Neovim
         vim.treesitter.start()
