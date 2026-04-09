@@ -15,6 +15,9 @@ Then everything can be installed in `~/.local/share/nvim/{parser,queries}`.
 │   ├── bash.so -> /usr/local/lib/libtree-sitter-bash.so
 │   └── rust.so -> /usr/local/lib/libtree-sitter-rust.so
 └── queries
+    ├── awk
+    │   ├── highlights.scm
+    │   └── injections.scm
     ├── bash
     │   ├── folds.scm
     │   ├── highlights.scm
@@ -28,7 +31,7 @@ Then everything can be installed in `~/.local/share/nvim/{parser,queries}`.
         ├── injections.scm
         └── locals.scm
 
-5 directories, 15 files
+6 directories, 17 files
 ```
 
 ## Sh/Bash
@@ -89,8 +92,12 @@ With `shellcheck` set as the `makeprg`, I can run `:mak` and then use a
 `QuickFixCmdPost` autocmd to take the errors from `shellcheck` and turn them
 into a list of `vim.Diagnostic[]` - to display like any other LSP diagnostic. 
 
+
 ```sh
+# Ubuntu/Debian based
 sudo apt install shellcheck
+# FreeBSD
+sudo pkg install hs-ShellCheck
 ```
 
 ## Rust

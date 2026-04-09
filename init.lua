@@ -13,7 +13,7 @@ vim.opt.colorcolumn   = "80"
 vim.cmd('colorscheme catppuccin')
 -- Highlighting on yank actions (from :h vim.hl)
 vim.cmd([[
-  autocmd TextYankPost * silent! lua vim.hl.on_yank {higroup='Visual'}
+  autocmd TextYankPost * silent! lua vim.hl.on_yank { higroup='Visual' }
 ]])
 
 -- LINE NUMBERS 
@@ -78,7 +78,11 @@ vim.api.nvim_create_autocmd('FileType', {
   local ns = vim.api.nvim_create_namespace("shellcheck")
 
   vim.api.nvim_create_autocmd('QuickFixCmdPost', {
-    buf = ev.buf,
+    -- NOTE: prior to #35330 `buf` was `buffer`
+    -- So on neovim v0.12-0.12.1 and lower use `buffer`
+    -- https://github.com/neovim/neovim/pull/35330
+    -- buf = ev.buf,
+    buffer = ev.buf,
     callback = function()
       local qf = vim.fn.getqflist()
       local diags = vim.diagnostic.fromqflist(qf)
