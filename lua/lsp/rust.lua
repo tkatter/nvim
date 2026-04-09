@@ -1,15 +1,13 @@
 vim.lsp.config('rust', {
-  -- Command and arguments to start the server.
   cmd = { 'rust-analyzer' },
-  -- Filetypes to automatically attach to.
   filetypes = { 'rust' },
   root_markers = { { 'Cargo.toml', 'Cargo.lock' }, '.git' },
   settings = {
     ['rust-analyzer'] = {
       -- Disable 'inactive-code' warnings for disabled #[cfg(feature)]s
-      -- diagnostics = {
-      --     disabled = { 'inactive-code' },
-      -- },
+      diagnostics = {
+          disabled = { 'inactive-code' },
+      },
       check = {
         command = 'clippy',
         -- Change when working in embedded
@@ -57,12 +55,12 @@ vim.lsp.config('rust', {
 
 vim.lsp.enable 'rust'
 
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('rust.lsp', {}),
-  callback = function(ev)
-    local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-    local ns = vim.lsp.diagnostic.get_namespace(ev.data.client_id)
-
-    vim.print(vim.diagnostic.get_namespace(ns).name)
-  end,
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   group = vim.api.nvim_create_augroup('rust.lsp', {}),
+--   callback = function(ev)
+--     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+--     local ns = vim.lsp.diagnostic.get_namespace(ev.data.client_id)
+--
+--     vim.print(vim.diagnostic.get_namespace(ns).name)
+--   end,
+-- })
