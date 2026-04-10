@@ -1,5 +1,11 @@
 # Treesitter
 
+Make sure `tree-sitter-cli` is installed. It can be installed via Cargo:
+
+```sh
+cargo install --locked tree-sitter-cli
+```
+
 Treesitter parsers and queries are installed manually.
 In [init.lua](init.lua) the following line makes them visible to Neovim:
 
