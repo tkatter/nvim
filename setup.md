@@ -16,20 +16,25 @@ vim.opt.rtp:prepend(vim.fn.stdpath('data'))
 Then everything can be installed in `~/.local/share/nvim/{parser,queries}`.
 
 ```
-/home/thomas/.local/share/nvim
+/home/thomas/.local/share/nvim/
 ├── parser
 │   ├── bash.so -> /usr/local/lib/libtree-sitter-bash.so
+│   ├── just.so -> /usr/local/lib/libtree-sitter-just.so
 │   └── rust.so -> /usr/local/lib/libtree-sitter-rust.so
 └── queries
-    ├── awk
-    │   ├── highlights.scm
-    │   └── injections.scm
     ├── bash
     │   ├── folds.scm
     │   ├── highlights.scm
     │   ├── indents.scm
     │   ├── injections.scm
     │   └── locals.scm
+    ├── just
+    │   ├── folds.scm
+    │   ├── highlights.scm
+    │   ├── indents.scm
+    │   ├── injections.scm
+    │   ├── locals.scm
+    │   └── textobjects.scm
     └── rust
         ├── folds.scm
         ├── highlights.scm
@@ -37,8 +42,13 @@ Then everything can be installed in `~/.local/share/nvim/{parser,queries}`.
         ├── injections.scm
         └── locals.scm
 
-6 directories, 17 files
+6 directories, 19 files
 ```
+
+It may be a good idea to read over the `Makefile` when installing these
+parsers once more before running them, but so far, they all seem to be
+following a standard. `make` simply builds the parser and `make install`
+installs the files into their respective locations (machine dependent).
 
 ## Sh/Bash
 
@@ -51,10 +61,6 @@ make
 sudo make install
 ln -s /usr/local/lib/libtree-sitter-bash.so ~/.local/share/nvim/parser/bash.so
 ```
-
-It may be a good idea to read over the `Makefile` once more before running
-these, but as of 4/9/26 `make` simply builds the parser and `make install`
-installs the files into their respective locations (machine dependent).
 
 I ended up using the queries from `nvim-treesitter/runtime/queries/bash/`.
 They seem to be maintained by @clason and others separately from
@@ -72,13 +78,21 @@ sudo make install
 ln -s /usr/local/lib/libtree-sitter-rust.so ~/.local/share/nvim/parser/rust.so
 ```
 
-It may be a good idea to read over the `Makefile` once more before running
-these, but as of 4/9/26 `make` simply builds the parser and `make install`
-installs the files into their respective locations (machine dependent).
-
 I ended up using the queries from `nvim-treesitter/runtime/queries/rust/`.
 They seem to be maintained by @clason and others separately from
 `tree-sitter-rust`. Permalink to queries [here][runtime-queries-rust].
+
+## Just
+
+Clone into the [repo][tree-sitter-just] and run the following sequence of commands:
+
+```sh
+mkdir -p ~/.local/share/nvim/queries/just/
+cp queries/just/* ~/.local/share/nvim/queries/just/
+make
+sudo make install
+ln -s /usr/local/lib/libtree-sitter-just.so ~/.local/share/nvim/parser/just.so
+```
 
 # LSPs
 
@@ -188,7 +202,8 @@ workspace = {
 [lua_ls_repo]: https://github.com/LuaLS/lua-language-server
 [lua_ls_web]: https://luals.github.io/
 [rust-analyzer]: https://rust-analyzer.github.io/book/configuration.html 
-[tree-sitter-rust]: https://github.com/tree-sitter/tree-sitter-rust
 [tree-sitter-bash]: https://github.com/tree-sitter/tree-sitter-bash
+[tree-sitter-just]: https://github.com/casey/tree-sitter-just.git
+[tree-sitter-rust]: https://github.com/tree-sitter/tree-sitter-rust
 [runtime-queries-bash]: https://github.com/nvim-treesitter/nvim-treesitter/tree/4916d6592ede8c07973490d9322f187e07dfefac/runtime/queries/bash
 [runtime-queries-rust]: https://github.com/nvim-treesitter/nvim-treesitter/tree/4916d6592ede8c07973490d9322f187e07dfefac/runtime/queries/rust

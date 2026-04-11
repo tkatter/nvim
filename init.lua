@@ -139,3 +139,12 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.cmd('silent make')
   end
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {'just', 'rust'},
+  callback = function(ev)
+    if vim.treesitter.language.add(ev.match) then
+      vim.treesitter.start(ev.buf, ev.match)
+    end
+  end
+})
