@@ -36,13 +36,20 @@ local function parse_git_diff(obj)
     return ''
   end
 
-  local stats = vim.split(obj.stdout, ',', {trimempty = true})
-  local ins, del = stats[#stats - 1], stats[#stats]
-  local pat = '(%d+)%s%a+%(([%+%-])%)'
-  local m1, m12 = string.match(ins, pat)
-  local m2, m22 = string.match(del, pat)
-  local res = string.format('%%#GitIns#%s%d%%* %%#GitDel#%s%d%%*', m12, m1, m22, m2)
-  return res
+  local hl = ''
+  local diff_stats = vim.split(obj.stdout, ',', {trimempty = true})
+  local stats = vim.list_slice(diff_stats, 2)
+  local it = vim.iter(stats):map(function(v)
+    local num, sign = string.match(v, '(%d+)%s%a+%(([%+%-])%)')
+    if sign == '+' then
+      hl = '%#GitIns#'
+    else
+      hl = '%#GitDel#'
+    end
+    return string.format('%s%s%d%%*', hl, sign, num)
+  end)
+
+  return it:join(' ')
 end
 
 ---@param winnr integer window to set the w.git_status variable for
