@@ -89,8 +89,14 @@ msgs.set_pos = function(tgt)
     })
   end
 end
+
 -- CTRL_s speed-save
 vim.keymap.set({'i', 'v', 'n'}, '<C-s>', '<esc>:w<cr>')
+-- Ctrl_Esc to exit terminal mode and Ctrl-r for register pasting
+vim.cmd([[
+  tnoremap <C-Esc> <C-\><C-n>
+  tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+]])
 
 -- haven't figured out how to get this to work
 vim.keymap.set('i', '<c-space>', function()
