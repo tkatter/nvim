@@ -11,7 +11,7 @@ vim.o.rnu = true
 vim.o.scs = true
 vim.g.mapleader  = ' '
 vim.o.clipboard  = 'unnamedplus'
-vim.o.statusline = "%<%f[%n] %h%w%m%r%15.(%{% w:git_status %}%)%=%y %L %-8.(%l:%v%)"
+vim.o.statusline = "%<%f[%n] %h%w%m%r%15.(%{% get(w:, 'git_status', '') %}%)%=%y %L %-8.(%l:%v%)"
 
 vim.cmd('colorscheme catppuccin')
 
