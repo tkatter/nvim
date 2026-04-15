@@ -111,6 +111,10 @@ vim.api.nvim_create_autocmd('FileType', {
       vim.treesitter.start(ev.buf, 'bash')
     end
 
+    if vim.fn.executable('shellcheck') == 0 then
+      return
+    end
+
     vim.cmd([[
       setlocal makeprg=shellcheck\ -f\ gcc\ %
       setlocal shellpipe=2>&1\ >
@@ -147,7 +151,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = {'just', 'rust'},
+  pattern = {'just', 'rust', 'python'},
   callback = function(ev)
     if vim.treesitter.language.add(ev.match) then
       vim.treesitter.start(ev.buf, ev.match)
