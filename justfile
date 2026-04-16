@@ -1,5 +1,8 @@
 set shell := ['bash', '-uc', '--']
 
+# grammar.js
+# 375 function_call
+
 cache_dir  := cache_dir()
 config_dir := config_dir()
 data_dir   := data_dir()
@@ -7,7 +10,7 @@ home_dir   := home_dir()
 ts_parser_dir  := data_dir / 'nvim' / 'parser'
 ts_queries_dir := data_dir / 'nvim' / 'queries'
 
-_no_win := if os() == 'windows' { error('not supported') } else { '' }
+_no_win := assert(os() != 'windows', 'not supported')
 _os-id  := `grep ^ID= /etc/os-release | cut -d= -f 2`
 distro  := if _os-id =~ '(debian|ubuntu|linuxmint)' {
   'debian' 
@@ -54,7 +57,7 @@ default:
 [no-exit-message]
 [doc('show the installed queries/parsers')]
 [arg("KIND", pattern="all|query|queries|parser|parsers")]
-list-installed +KIND='all':
+ts-list +KIND='all':
   #!/usr/bin/env bash
   set -euo pipefail
   [[ '{{KIND}}' =~ quer|all ]] && {
@@ -77,11 +80,12 @@ list-installed +KIND='all':
       }'; }
 
       
-[doc('install treesitter parser/queries for `lang`')]
+[doc('install both parser and queries for `lang`')]
 [parallel]
 [arg('lang', help='treesitter language(s) to install')]
 ts-install +lang: dirs (install-parser lang) (install-queries lang)
 
+[doc('install treesitter parser for `lang`')]
 install-parser +lang: 
   #!/usr/bin/env bash
   set -euo pipefail
@@ -109,6 +113,7 @@ install-parser +lang:
   }
   for lang in {{lang}}; do install; done
 
+[doc('install treesitter queries for `lang`')]
 install-queries +lang:
   #!/usr/bin/env bash
   set -euo pipefail
