@@ -1,8 +1,5 @@
 set shell := ['bash', '-uc', '--']
 
-# grammar.js
-# 375 function_call
-
 cache_dir  := cache_dir()
 config_dir := config_dir()
 data_dir   := data_dir()
@@ -35,7 +32,7 @@ pkg_mgr := if os() == 'freebsd' {
 }
 
 neovim_prereqs := if os() == 'freebsd' {
-  'cmake gmake wget gettext curl git'
+  'llvm22 cmake gmake wget gettext curl git'
 } else if distro == 'debian' {
   'ninja-build gettext cmake curl build-essential git'
 } else {
@@ -163,12 +160,12 @@ install-nvim build='RelWithDebInfo' prefix='': nvim-build-deps
 
 [private]
 @nvim-build-deps:
-  command -v tree-sitter &>/dev/null || { \
-     echo '{{BLUE}}installing tree-sitter{{NORMAL}}'; \
-    '{{cargo}}' install -q --locked tree-sitter-cli; }
-
   echo '{{BLUE}}installing neovim build pre-requisites{{NORMAL}}'
   '{{sudo}}' '{{pkg_mgr}}' install -q -y {{neovim_prereqs}}
+
+  command -v tree-sitter &>/dev/null || { \
+     echo '{{BLUE}}installing tree-sitter{{NORMAL}}'; \
+    '{{cargo}}' install -q -f --locked tree-sitter-cli; }
 
 ts-remove +lang:
   #!/usr/bin/env bash
