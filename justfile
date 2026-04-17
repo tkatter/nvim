@@ -7,6 +7,11 @@ home_dir   := home_dir()
 ts_parser_dir  := data_dir / 'nvim' / 'parser'
 ts_queries_dir := data_dir / 'nvim' / 'queries'
 
+github_url   := 'https://github.com'
+nvim_repo    := github_url + '/neovim/neovim.git'
+ts_github    := github_url + '/tree-sitter'
+nvim_ts_repo := github_url + '/nvim-treesitter/nvim-treesitter.git'
+
 _no_win := assert(os() != 'windows', 'not supported')
 _os-id  := `grep ^ID= /etc/os-release | cut -d= -f 2`
 distro  := if _os-id =~ '(debian|ubuntu|linuxmint)' {
@@ -31,7 +36,7 @@ pkg_mgr := if os() == 'freebsd' {
   error('not supported')
 }
 
-neovim_prereqs := if os() == 'freebsd' {
+neovim_prereqs := if distro == 'freebsd' {
   'llvm22 cmake gmake wget gettext curl git'
 } else if distro == 'debian' {
   'ninja-build gettext cmake curl build-essential git'
@@ -51,55 +56,53 @@ default:
   install -d "{{ts_parser_dir}}"
   install -d "{{ts_queries_dir}}"
 
-[no-exit-message]
 [doc('show the installed queries/parsers')]
 [arg("KIND", pattern="all|query|queries|parser|parsers")]
 ts-list +KIND='all':
   #!/usr/bin/env bash
   set -euo pipefail
-  [[ '{{KIND}}' =~ quer|all ]] && {
+  if [[ '{{KIND}}' =~ quer|all ]]; then
     echo '{{YELLOW}}{{BOLD}}Queries:{{NORMAL}}'
-    ls -1 -R {{ts_queries_dir / '*'}} \
-      | awk '/^.*:/{
+    ls -1 -R {{ts_queries_dir / '*'}} | awk '
+      /^.*:/{
         sub(/.*\//, "")
         print "\033[32m"$NF"\033[0m"
       }
       /^.*\.scm$/{
         print "  \033[34m"$0"\033[0m"
-      }'; }
+      }'
+  fi
 
-  [[ '{{KIND}}' =~ parser|all ]] && {
+  if [[ '{{KIND}}' =~ parser|all ]]; then
     echo '{{YELLOW}}{{BOLD}}Parsers:{{NORMAL}}'
-    ls -l {{ts_parser_dir}} \
-      | awk '{
-        if (length($9) == 0) next
-        print "  \033[36m"$9"\033[0m -> \033[34m"$NF"\033[0m"
-      }'; }
-
+    ls -l {{ts_parser_dir}} | awk '{
+      if (length($9) == 0) next
+      print "  \033[36m"$9"\033[0m -> \033[34m"$NF"\033[0m"
+    }'
+  fi
       
-[doc('install both parser and queries for `lang`')]
 [parallel]
+[doc('install both parser and queries for `lang`')]
 [arg('lang', help='treesitter language(s) to install')]
-ts-install +lang: dirs (install-parser lang) (install-queries lang)
+ts-install +lang: (install-parser lang) (install-queries lang)
 
 [doc('install treesitter parser for `lang`')]
-install-parser +lang: 
+install-parser +lang: dirs
   #!/usr/bin/env bash
   set -euo pipefail
   install() {
     [ -z "$lang" ] && return
-    echo "{{GREEN}}installing $lang parser...{{NORMAL}}"
-    [ -d "/tmp/tree-sitter-$lang" ] || git clone -q --depth 5 \
-      "git@github.com:tree-sitter/tree-sitter-$lang.git" \
-      "/tmp/tree-sitter-$lang"
-
     [ -d "/tmp/tree-sitter-$lang" ] || {
-      echo '{{style("error")}}no parser found under the tree-sitter github repo{{NORMAL}}'
-      exit 1; }
+      printf "{{style('error')}}%s doesn't exist{{NORMAL}}\n" \
+        "{{ts_github + '/tree-sitter-'}}$lang"
+      return; }
 
+    echo "{{GREEN}}installing $lang parser...{{NORMAL}}"
     echo '  {{BLUE}}building parser{{NORMAL}}'
     cd "/tmp/tree-sitter-$lang" && '{{sudo}}' '{{make}}' install &>/dev/null \
-      || { echo "{{style('error')}}failed to build parser for $lang"; exit 1; }
+      || { \
+      echo "{{style('error')}}failed to build parser for $lang"; \
+      cd /tmp; return; }
 
     src="$(find /usr/local/lib -name "*libtree*$lang.{{so_ext}}")"
     dest="{{ts_parser_dir}}/$lang.{{so_ext}}"
@@ -108,43 +111,48 @@ install-parser +lang:
     echo "    {{CYAN}}$src{{NORMAL}} -> $dest"
     cd /tmp && rm -rf "/tmp/tree-sitter-$lang"
   }
-  for lang in {{lang}}; do install; done
+  for lang in {{lang}}; do 
+    just clone-ts-repo "$lang" "/tmp/tree-sitter-$lang"
+    install
+  done
 
 [doc('install treesitter queries for `lang`')]
-install-queries +lang:
+install-queries +lang: dirs (clone-repo nvim_ts_repo '/tmp/nvim-treesitter')
   #!/usr/bin/env bash
   set -euo pipefail
   install() {
     [ -z "$lang" ] && return
     echo "{{GREEN}}installing $lang queries...{{NORMAL}}"
-    [ -d '/tmp/nvim-treesitter' ] || git clone -q --depth 5 \
-      'https://github.com/nvim-treesitter/nvim-treesitter.git' \
-      '/tmp/nvim-treesitter'
-
     src_queries="/tmp/nvim-treesitter/runtime/queries/$lang"
     [ -d "$src_queries" ] || {
       echo "{{style('error')}}No nvim-treesitter queries found for $lang{{NORMAL}}"
-      exit 1; }
+      return; }
 
     printf "  {{BLUE}}installing{{NORMAL}} %-15s -> {{ts_queries_dir}}/$lang/\n" \
       `ls -1 "$src_queries"`
     cp -r "$src_queries" "{{ts_queries_dir}}/"
   }
-  for lang in {{lang}}; do install; done
+
+  for lang in {{lang}}; do
+    install
+  done
   rm -rf '/tmp/nvim-treesitter'
 
 [doc('build/install neovim from source')]
 [arg('build', help='neovim build type')]
 [arg('prefix', help='prefix directory to install neovim under')]
-install-nvim build='RelWithDebInfo' prefix='': nvim-build-deps
+install-nvim \
+  build='RelWithDebInfo' prefix='': nvim-build-deps (clone-repo nvim_repo '/tmp/neovim')
   #!/usr/bin/env bash
   set -euo pipefail
   [ '{{os()}}' = 'linux' ] && [ '{{distro}}' != 'debian' ] && {
     echo '{{style("error")}}install neovim via the package manager{{NORMAL}}'
     exit 1; }
 
-  [ -d '/tmp/neovim' ] || git clone --depth 5 \
-      https://github.com/neovim/neovim.git /tmp/neovim 2>/dev/null
+  [ -d '/tmp/neovim' ] || {
+    echo "{{style('error')}}can't find '/tmp/neovim'{{NORMAL}}"
+    exit 1; }
+
   echo '{{BLUE}}building neovim...{{NORMAL}}'
   cd /tmp/neovim && {
     '{{make}}' CMAKE_BUILD_TYPE='{{build}}'
@@ -197,3 +205,18 @@ clean-nvim keep='':
     ${prune_dirs[*]} \
     -o -path '*nvim/*' -prune \
     -o \( -name 'nvim' -exec sudo rm -rf '{}' + \) 2>/dev/null
+
+[private]
+@clone-repo repo path=(replace_regex(repo, '.*/', '')):
+  [ -d '{{path}}' ] || { \
+    echo "{{BOLD}}cloning {{repo}} into {{path}}{{NORMAL}}"; \
+    git clone -q --depth 1 '{{repo}}' '{{path}}'; }
+
+[private]
+@clone-ts-repo \
+  lang \
+  repo=(ts_github + "/tree-sitter-" + lang + ".git") \
+  path=("tree-sitter-" + lang):
+    [ -d '{{path}}' ] || { \
+      echo "{{BOLD}}cloning {{repo}} into {{path}}{{NORMAL}}"; \
+      git clone -q --depth 1 '{{repo}}' '{{path}}'; }
