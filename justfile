@@ -215,8 +215,8 @@ clean-nvim keep='':
 [private]
 @clone-ts-repo \
   lang \
-  repo=(ts_github + "/tree-sitter-" + lang + ".git") \
-  path=("tree-sitter-" + lang):
+  path=("tree-sitter-" + lang) \
+  repo=(ts_github + "/tree-sitter-" + lang + ".git"):
     [ -d '{{path}}' ] || { \
       echo "{{BOLD}}cloning {{repo}} into {{path}}{{NORMAL}}"; \
       git clone -q --depth 1 '{{repo}}' '{{path}}'; }
