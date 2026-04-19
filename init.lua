@@ -143,9 +143,26 @@ end
 -- CTRL_s speed-save
 nmap('<C-s>', '<esc>:w<cr>',   { desc = 'Quick :w' })
 vmap('<C-s>', '<esc>:w<cr>gv', { desc = 'Quick :w' })
+
+-- Terminal things
 tmap('<C-Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 tmap('<C-R>', "'<C-\\><C-N>\"'.nr2char(getchar()).'pi'",
   { expr = true, desc = 'Paste from register' })
+
+-- Ntree as mini.files
+nmap('<leader>e', function()
+  local buf = api.nvim_get_current_buf()
+  local dir = vim.fs.dirname(fn.expand('#' .. buf .. ':p'))
+  vim.cmd('Hexplore ' .. dir)
+end, { desc = 'Open netrw file browser for current buffer\'s directory' })
+
+-- Restart && restore nvim session
+nmap("<leader>re", function()
+  vim.cmd [[
+    exe 'mks! ' .. fnameescape(g:session_file)
+    exe 'restart source ' .. fnameescape(g:session_file)
+  ]]
+end, { silent = true, desc = "Restart nvim session" })
 
 -- Manual trigger for LSP completion
 imap('<c-space>', function() vim.lsp.completion.get() end,
@@ -153,6 +170,7 @@ imap('<c-space>', function() vim.lsp.completion.get() end,
 
 local augp    = api.nvim_create_augroup('tkatter', { clear = true })
 local augp_ts = api.nvim_create_augroup('tkatter/ts', { clear = true })
+local augp_rnu = api.nvim_create_augroup('tkatter/toggle_rnu', { clear = true })
 
 -- Treesitter/Diagnostics for sh/bash scripts
 api.nvim_create_autocmd('FileType', {
@@ -212,4 +230,52 @@ api.nvim_create_autocmd('FileType', {
       vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
   end
+})
+
+-- Quick close non-editing windows
+api.nvim_create_autocmd('FileType', {
+  group    = augp,
+  desc     = 'Close with <q>',
+  pattern  = { 'git', 'help', 'netrw', 'man', 'qf', 'scratch' },
+  callback = function(args)
+    if args.match == 'netrw' then
+      vim.keymap.set('n', 'q', '<C-W>q',        { buffer = args.buf })
+    else
+      vim.keymap.set('n', 'q', '<cmd>quit<cr>', { buffer = args.buf })
+    end
+  end,
+})
+
+-- Toggle relative line numbers
+api.nvim_create_autocmd({
+    'BufEnter',
+    'FocusGained',
+    'InsertLeave',
+    'CmdlineLeave',
+    'WinEnter',
+  }, {
+  group    = augp_rnu,
+  desc     = 'Toggle relative line numbers on',
+  callback = function(_)
+    if vim.wo.nu and
+    not vim.startswith(api.nvim_get_mode().mode, 'i') then
+      vim.wo.relativenumber = true
+    end
+  end,
+})
+
+api.nvim_create_autocmd({
+    'BufLeave',
+    'FocusLost',
+    'InsertEnter',
+    'CmdlineEnter',
+    'WinLeave'
+  }, {
+  group    = augp_rnu,
+  desc     = 'Toggle relative line numbers off',
+  callback = function(_)
+    if vim.wo.nu then
+      vim.wo.relativenumber = false
+    end
+  end,
 })
