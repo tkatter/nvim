@@ -1,12 +1,12 @@
 vim.lsp.config('rust', {
-  cmd = { 'rust-analyzer' },
-  filetypes = { 'rust' },
+  cmd          = { 'rust-analyzer' },
+  filetypes    = { 'rust' },
   root_markers = { { 'Cargo.toml', 'Cargo.lock' }, '.git' },
   settings = {
     ['rust-analyzer'] = {
       -- Disable 'inactive-code' warnings for disabled #[cfg(feature)]s
       diagnostics = {
-          disabled = { 'inactive-code' },
+        disabled = { 'inactive-code' },
       },
       check = {
         command = 'clippy',
@@ -18,49 +18,47 @@ vim.lsp.config('rust', {
         postfix = { enable = true },
         snippets = {
           ['Ok'] = {
-            postfix = 'ok',
-            body = 'Ok(${receiver})',
+            body        = 'Ok(${receiver})',
             description = 'Wrap the expression in a `Result::Ok`',
-            scope = 'expr',
+            postfix     = 'ok',
+            scope       = 'expr',
           },
           ['Arc::new'] = {
-            postfix = 'arc',
-            body = 'Arc::new(${receiver})',
+            body        = 'Arc::new(${receiver})',
             description = 'Wrap the expression in an `Arc`',
-            scope = 'expr',
+            postfix     = 'arc',
+            scope       = 'expr',
           },
           ['Arc::clone'] = {
-            postfix = 'aclone',
-            body = 'Arc::clone(${receiver})',
+            body        = 'Arc::clone(${receiver})',
             description = 'Explicitly annotate as an `Arc::clone`',
-            scope = 'expr',
+            postfix     = 'aclone',
+            scope       = 'expr',
           },
           ['Some'] = {
-            postfix = 'some',
-            body = 'Some(${receiver})',
+            body        = 'Some(${receiver})',
             description = 'Wrap the expression in an `Option::Some`',
-            scope = 'expr',
+            postfix     = 'some',
+            scope       = 'expr',
           },
           ['Err'] = {
-            postfix = 'err',
-            body = 'Err(${receiver})',
+            body        = 'Err(${receiver})',
             description = 'Wrap the expression in an `Result::Err`',
-            scope = 'expr',
+            postfix     = 'err',
+            scope       = 'expr',
           },
         },
       },
     },
   },
+  on_attach = function(client, bufnr)
+    vim.lsp.completion.enable(true, client.id, bufnr, {
+      autotrigger = true,
+      convert = function(item)
+        return { abbr = item.label:gsub('%b()', '') }
+      end,
+    })
+  end,
 })
 
 vim.lsp.enable 'rust'
-
--- vim.api.nvim_create_autocmd('LspAttach', {
---   group = vim.api.nvim_create_augroup('rust.lsp', {}),
---   callback = function(ev)
---     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
---     local ns = vim.lsp.diagnostic.get_namespace(ev.data.client_id)
---
---     vim.print(vim.diagnostic.get_namespace(ns).name)
---   end,
--- })

@@ -63,6 +63,9 @@ vim.cmd [[
   hi @function.builtin.bash guifg=#f38ba8
   "Highlighting on yank actions (from :h vim.hl)
   autocmd TextYankPost * silent! lua vim.hl.on_yank { higroup='Visual' }
+  "Auto-completion menu
+  "see ':h ins-completion-menu' for details on customization
+  set completeopt=menuone,noselect,popup
 ]]
 
 require 'st_line'.setup()
@@ -144,8 +147,9 @@ tmap('<C-Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 tmap('<C-R>', "'<C-\\><C-N>\"'.nr2char(getchar()).'pi'",
   { expr = true, desc = 'Paste from register' })
 
--- haven't figured out how to get this to work
-imap('<c-space>', function() vim.lsp.completion.get() end)
+-- Manual trigger for LSP completion
+imap('<c-space>', function() vim.lsp.completion.get() end,
+  { desc = 'Manual poll for LSP completion' })
 
 local augp    = api.nvim_create_augroup('tkatter', { clear = true })
 local augp_ts = api.nvim_create_augroup('tkatter/ts', { clear = true })
