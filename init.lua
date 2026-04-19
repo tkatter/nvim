@@ -1,33 +1,80 @@
 -- Add ~/.local/share/nvim to rtp
 vim.opt.rtp:prepend(vim.fn.stdpath('data'))
 
+local api  = vim.api
+local diag = vim.diagnostic
+local fn   = vim.fn
+local map  = vim.keymap
+local ts   = vim.treesitter
+
+---@param rhs string
+---@param lhs fun()|string
+---@param opts vim.keymap.set.Opts|nil
+local imap  = function(rhs, lhs, opts)
+  map.set({'i'}, rhs, lhs, opts or {})
+end
+
+---@param rhs string
+---@param lhs fun()|string
+---@param opts vim.keymap.set.Opts|nil
+local vmap  = function(rhs, lhs, opts)
+  map.set({'v'}, rhs, lhs, opts or {})
+end
+
+---@param rhs string
+---@param lhs fun()|string
+---@param opts vim.keymap.set.Opts|nil
+local nmap  = function(rhs, lhs, opts)
+  map.set({'n'}, rhs, lhs, opts or {})
+end
+
+---@param rhs string
+---@param lhs fun()|string
+---@param opts vim.keymap.set.Opts|nil
+local tmap  = function(rhs, lhs, opts)
+  map.set({'t'}, rhs, lhs, opts or {})
+end
+
 vim.o.ch  = 1
 vim.o.sw  = 2
 vim.o.et  = true
 vim.o.tgc = true
 vim.o.cc  = "80"
-vim.o.nu  = false
+vim.o.nu  = true
 vim.o.rnu = true
 vim.o.scs = true
-vim.g.mapleader  = ' '
 vim.o.clipboard  = 'unnamedplus'
 vim.o.statusline = "%<%f[%n] %h%w%m%r%15.(%{% get(w:, 'git_status', '') %}%)%=%y %L %-8.(%l:%v%)"
+vim.o.pumborder  = 'rounded'
+vim.o.winborder  = 'rounded'
 
-vim.cmd('colorscheme catppuccin')
-
--- Highlighting on yank actions (from :h vim.hl)
-vim.cmd([[
+vim.cmd [[
+  let g:netrw_usetab  = 1
+  let g:netrw_winsize = 30 
+  let g:netrw_size_style   = 'H'
+  let g:netrw_browse_split = 3
+  let mapleader    = ' '
+  let session_file = stdpath('state') .. '/session.vim'
+  colorscheme catppuccin
+  hi link NormalFloat MsgArea
+  hi link FloatBorder MatchParen
+  hi link PmenuBorder MatchParen
+  hi @function.builtin.just guifg=#eba0ac
+  hi @function.builtin.bash guifg=#f38ba8
+  "Highlighting on yank actions (from :h vim.hl)
   autocmd TextYankPost * silent! lua vim.hl.on_yank { higroup='Visual' }
-]])
+]]
 
-require'st_line'.setup()
+require 'st_line'.setup()
 require 'lsp.lua_ls'
 require 'lsp.rust'
 require 'diagnostics'
 require 'align'
 
 -- UI2
-require('vim._core.ui2').enable({
+local ui2  = require('vim._core.ui2')
+local msgs = require('vim._core.ui2.messages')
+ui2.enable({
   enable = true,
   msg = {
     targets = {
@@ -58,28 +105,28 @@ require('vim._core.ui2').enable({
       wmsg         = 'msg',
     },
     cmd = {
-      height = 0.5,
+      height  = 0.5,
     },
     dialog = {
-      height = 0.5,
+      height  = 0.5,
     },
     msg = {
-      height = 0.3,
+      height  = 0.3,
       timeout = 3000,
     },
     pager = {
-      height = 0.5,
+      height  = 0.5,
     },
   },
 })
 
-local ui2 = require('vim._core.ui2')
-local msgs = require('vim._core.ui2.messages')
+-- Notification/toasts
 local orig_set_pos = msgs.set_pos
 msgs.set_pos = function(tgt)
   orig_set_pos(tgt)
-  if (tgt == 'msg' or tgt == nil) and vim.api.nvim_win_is_valid(ui2.wins.msg) then
-    pcall(vim.api.nvim_win_set_config, ui2.wins.msg, {
+  if (tgt == 'msg' or tgt == nil)
+  and api.nvim_win_is_valid(ui2.wins.msg) then
+    pcall(api.nvim_win_set_config, ui2.wins.msg, {
       anchor   = 'NE',
       border   = 'rounded',
       col      = vim.o.columns - 1,
@@ -91,70 +138,74 @@ msgs.set_pos = function(tgt)
 end
 
 -- CTRL_s speed-save
-vim.keymap.set({'i', 'v', 'n'}, '<C-s>', '<esc>:w<cr>')
--- Ctrl_Esc to exit terminal mode and Ctrl-r for register pasting
-vim.cmd([[
-  tnoremap <C-Esc> <C-\><C-n>
-  tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
-]])
+nmap('<C-s>', '<esc>:w<cr>',   { desc = 'Quick :w' })
+vmap('<C-s>', '<esc>:w<cr>gv', { desc = 'Quick :w' })
+tmap('<C-Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+tmap('<C-R>', "'<C-\\><C-N>\"'.nr2char(getchar()).'pi'",
+  { expr = true, desc = 'Paste from register' })
 
 -- haven't figured out how to get this to work
-vim.keymap.set('i', '<c-space>', function()
-  vim.lsp.completion.get()
-end)
+imap('<c-space>', function() vim.lsp.completion.get() end)
+
+local augp    = api.nvim_create_augroup('tkatter', { clear = true })
+local augp_ts = api.nvim_create_augroup('tkatter/ts', { clear = true })
 
 -- Treesitter/Diagnostics for sh/bash scripts
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = {'sh', 'bash'},
+api.nvim_create_autocmd('FileType', {
+  group    = augp_ts,
+  desc     = 'Treesitter and diagnostics for shell scripts',
+  pattern  = {'sh', 'bash'},
   callback = function(ev)
-    if vim.treesitter.language.add('bash') then
-      vim.treesitter.start(ev.buf, 'bash')
+    if ts.language.add('bash') then
+      ts.start(ev.buf, 'bash')
     end
 
-    if vim.fn.executable('shellcheck') == 0 then
+    if fn.executable('shellcheck') == 0 then
       return
     end
 
-    vim.cmd([[
+    vim.cmd [[
       setlocal makeprg=shellcheck\ -f\ gcc\ %
       setlocal shellpipe=2>&1\ >
-    ]])
+    ]]
 
     -- NOTE: prior to #35330 `buf` was `buffer`
     -- So on neovim v0.12-0.12.1 and lower use `buffer`
     -- https://github.com/neovim/neovim/pull/35330
 
     -- Turn ':make' results into diagnostics from shellcheck
-    local ns = vim.api.nvim_create_namespace('shellcheck')
-    vim.api.nvim_create_autocmd('QuickFixCmdPost', {
-      buf = ev.buf,
-      -- buffer = ev.buf,
+    local ns = api.nvim_create_namespace('shellcheck')
+    api.nvim_create_autocmd('QuickFixCmdPost', {
+      buf      = ev.buf,
       callback = function()
-        local qf = vim.fn.getqflist()
-        local diags = vim.diagnostic.fromqflist(qf)
-        vim.diagnostic.set(ns, ev.buf, diags)
-        vim.fn.setqflist({}, 'r')
+        local qf    = fn.getqflist()
+        local diags = diag.fromqflist(qf)
+        diag.set(ns, ev.buf, diags)
+        fn.setqflist({}, 'r')
       end
     })
 
-    vim.api.nvim_create_autocmd('BufWritePost', {
-      buf = ev.buf,
-      -- buffer = ev.buf,
+    api.nvim_create_autocmd('BufWritePost', {
+      buf     = ev.buf,
       command = 'silent make',
     })
 
     -- Hacky BufEnter
     -- call shellcheck after all the setup on initial
     -- entry to populate diagnostics (if any)
-    vim.cmd('silent make')
+    vim.cmd 'silent make'
   end
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = {'just', 'rust', 'python'},
+-- Treesitter startup
+api.nvim_create_autocmd('FileType', {
+  group    = augp_ts,
+  desc     = 'Start treesitter',
+  pattern  = {'just', 'rust', 'python', 'javascript'},
   callback = function(ev)
-    if vim.treesitter.language.add(ev.match) then
-      vim.treesitter.start(ev.buf, ev.match)
+    if ts.language.add(ev.match) then
+      ts.start(ev.buf, ev.match)
+      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
   end
 })

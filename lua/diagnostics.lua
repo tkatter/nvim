@@ -17,9 +17,6 @@
 -- diagnostic-loclist-example
 -- diagnostic-handlers-example
 
-vim.api.nvim_set_hl(0, 'FloatBorder', {link = 'MatchParen'})
-vim.api.nvim_set_hl(0, 'NormalFloat', {link = 'MsgArea'})
-
 vim.diagnostic.config {
     severity_sort = true,
     float = {
