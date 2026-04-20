@@ -1,3 +1,5 @@
+;inherits: just
+
 ; sh script injections == bash
 (recipe_body
   (shebang

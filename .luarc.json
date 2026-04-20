@@ -5,12 +5,12 @@
      "path": [
        "?.lua",
        "?/init.lua"
-     ],
+     ]
   },
   "workspace": {
     "library": [
       "$VIMRUNTIME",
-      "${3rd}/luv/library",
+      "${3rd}/luv/library"
     ],
     "checkThirdParty": false
   }
