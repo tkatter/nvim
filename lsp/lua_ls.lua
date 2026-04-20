@@ -1,4 +1,4 @@
-vim.lsp.config('lua_ls', {
+return {
   on_init = function(client)
     -- use .luarc.json(ck if present
     if client.workspace_folders then
@@ -51,6 +51,12 @@ vim.lsp.config('lua_ls', {
   settings = {
       Lua = {},
   },
-})
-
-vim.lsp.enable 'lua_ls'
+  on_attach = function(client, bufnr)
+    vim.lsp.completion.enable(true, client.id, bufnr, {
+      autotrigger = true,
+      convert = function(item)
+        return { abbr = item.label:gsub('%b()', '') }
+      end,
+    })
+  end,
+}

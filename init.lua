@@ -1,15 +1,20 @@
--- Add ~/.local/share/nvim to rtp
-vim.opt.rtp:prepend(vim.fn.stdpath('data'))
-
 local api  = vim.api
 local diag = vim.diagnostic
 local fn   = vim.fn
 local map  = vim.keymap
 local ts   = vim.treesitter
 
+---@param grp string
+---@param opts vim.api.keyset.highlight|nil
+---Set global highlights (ns = 0).
+local ghl = function(grp, opts)
+  api.nvim_set_hl(0, grp, opts or {})
+end
+
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
+---Set 'insert' mode keymap.
 local imap  = function(rhs, lhs, opts)
   map.set({'i'}, rhs, lhs, opts or {})
 end
@@ -17,6 +22,7 @@ end
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
+---Set 'visual' mode keymap.
 local vmap  = function(rhs, lhs, opts)
   map.set({'v'}, rhs, lhs, opts or {})
 end
@@ -24,6 +30,7 @@ end
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
+---Set 'normal' mode keymap.
 local nmap  = function(rhs, lhs, opts)
   map.set({'n'}, rhs, lhs, opts or {})
 end
@@ -31,9 +38,21 @@ end
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
+---Set 'terminal' mode keymap.
 local tmap  = function(rhs, lhs, opts)
   map.set({'t'}, rhs, lhs, opts or {})
 end
+
+local function init()
+  require 'ui2'
+  require 'diagnostics'
+  require 'align'
+  vim.lsp.enable 'rust'
+  vim.lsp.enable 'lua_ls'
+end
+
+-- Add ~/.local/share/nvim to rtp
+vim.opt.rtp:prepend(fn.stdpath('data'))
 
 vim.o.ch  = 1
 vim.o.sw  = 2
@@ -43,102 +62,62 @@ vim.o.cc  = "80"
 vim.o.nu  = true
 vim.o.rnu = true
 vim.o.scs = true
-vim.o.clipboard  = 'unnamedplus'
-vim.o.statusline = "%<%f[%n] %h%w%m%r%15.(%{% get(w:, 'git_status', '') %}%)%=%y %L %-8.(%l:%v%)"
-vim.o.pumborder  = 'rounded'
-vim.o.winborder  = 'rounded'
+vim.o.clipboard    = 'unnamedplus'
+vim.o.statusline   = "%<%f[%n] %h%w%m%r%15.(%{% get(w:, 'git_status', '') %}%)%=%y %L %-8.(%l:%v%)"
+vim.o.pumheight    = 10
+vim.o.pumblend     = 15
+vim.o.pumborder    = 'rounded'
+vim.o.winborder    = 'rounded'
+vim.o.autocomplete = true
+vim.o.complete     = '.^5,w^5,b^5,u^5'
+vim.o.completeopt  = 'menuone,noselect,popup' -- ':h ins-completion-menu'
 
-vim.cmd [[
-  let g:netrw_usetab  = 1
-  let g:netrw_winsize = 30 
-  let g:netrw_size_style   = 'H'
-  let g:netrw_browse_split = 3
-  let mapleader    = ' '
-  let session_file = stdpath('state') .. '/session.vim'
-  colorscheme catppuccin
-  hi link NormalFloat MsgArea
-  hi link FloatBorder MatchParen
-  hi link PmenuBorder MatchParen
-  hi @function.builtin.just guifg=#eba0ac
-  hi @function.builtin.bash guifg=#f38ba8
-  "Highlighting on yank actions (from :h vim.hl)
-  autocmd TextYankPost * silent! lua vim.hl.on_yank { higroup='Visual' }
-  "Auto-completion menu
-  "see ':h ins-completion-menu' for details on customization
-  set completeopt=menuone,noselect,popup
-]]
+vim.g.mapleader     = ' '
+vim.g.session_file  = fn.stdpath('state') .. '/session.vim'
+vim.g.netrw_winsize = 30
+vim.g.netrw_size_style   = 'H'
+vim.g.netrw_browse_split = 3
 
-require 'st_line'.setup()
-require 'lsp.lua_ls'
-require 'lsp.rust'
-require 'diagnostics'
-require 'align'
+vim.cmd.colorscheme 'catppuccin'
 
--- UI2
-local ui2  = require('vim._core.ui2')
-local msgs = require('vim._core.ui2.messages')
-ui2.enable({
-  enable = true,
-  msg = {
-    targets = {
-      ['']         = 'msg',
-      bufwrite     = 'msg',
-      completion   = 'cmd',
-      confirm      = 'cmd',
-      echo         = 'msg',
-      echoerr      = 'pager',
-      echomsg      = 'msg',
-      empty        = 'cmd',
-      emsg         = 'pager',
-      list_cmd     = 'pager',
-      lua_error    = 'pager',
-      lua_print    = 'msg',
-      progress     = 'pager',
-      quickfix     = 'msg',
-      rpc_error    = 'pager',
-      search_cmd   = 'cmd',
-      search_count = 'cmd',
-      shell_cmd    = 'pager',
-      shell_err    = 'pager',
-      shell_out    = 'pager',
-      shell_ret    = 'msg',
-      undo         = 'msg',
-      verbose      = 'pager',
-      wildlist     = 'cmd',
-      wmsg         = 'msg',
-    },
-    cmd = {
-      height  = 0.5,
-    },
-    dialog = {
-      height  = 0.5,
-    },
-    msg = {
-      height  = 0.3,
-      timeout = 3000,
-    },
-    pager = {
-      height  = 0.5,
-    },
-  },
+ghl('NormalFloat', { bg = '#181825', update = true })
+ghl('FloatBorder', { fg = '#fab387', bg = '#181825' })
+ghl('PmenuBorder', { fg = '#fab387', bg = '#181825' })
+ghl('@function.builtin.just', { fg = '#eba0ac', update = true })
+ghl('@function.builtin.bash', { fg = '#f38ba8', update = true })
+
+ghl('Pmenu', {
+  fg = '#cba6f7',
+  update = true,
 })
 
--- Notification/toasts
-local orig_set_pos = msgs.set_pos
-msgs.set_pos = function(tgt)
-  orig_set_pos(tgt)
-  if (tgt == 'msg' or tgt == nil)
-  and api.nvim_win_is_valid(ui2.wins.msg) then
-    pcall(api.nvim_win_set_config, ui2.wins.msg, {
-      anchor   = 'NE',
-      border   = 'rounded',
-      col      = vim.o.columns - 1,
-      relative = 'editor',
-      row      = 1,
-      style    = 'minimal',
-    })
-  end
-end
+ghl('PmenuMatch', {
+  fg = '#b4befe',
+  update = true,
+})
+
+ghl('PmenuSel', {
+  blend = 0,
+  update = true
+})
+
+ghl('PmenuKindSel', {
+  fg = '#fab387',
+  bg = '#181825',
+  bold = true,
+  update = true,
+})
+
+ghl('PmenuKind', {
+  fg = '#f9e2af',
+  bg = '#181825',
+  bold = true,
+  update = true,
+})
+
+-- Highlighting on yank actions (from :h vim.hl)
+api.nvim_create_autocmd('TextYankPost',
+  { command = 'silent! lua vim.hl.on_yank { higroup="Visual" }' })
 
 -- CTRL_s speed-save
 nmap('<C-s>', '<esc>:w<cr>',   { desc = 'Quick :w' })
@@ -279,3 +258,5 @@ api.nvim_create_autocmd({
     end
   end,
 })
+
+init()

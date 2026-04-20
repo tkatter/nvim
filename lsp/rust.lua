@@ -1,4 +1,4 @@
-vim.lsp.config('rust', {
+return {
   cmd          = { 'rust-analyzer' },
   filetypes    = { 'rust' },
   root_markers = { { 'Cargo.toml', 'Cargo.lock' }, '.git' },
@@ -59,6 +59,4 @@ vim.lsp.config('rust', {
       end,
     })
   end,
-})
-
-vim.lsp.enable 'rust'
+}
