@@ -129,12 +129,12 @@ tmap('<C-Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 tmap('<C-R>', "'<C-\\><C-N>\"'.nr2char(getchar()).'pi'",
   { expr = true, desc = 'Paste from register' })
 
--- Ntree as mini.files
-nmap('<leader>e', function()
-  local buf = api.nvim_get_current_buf()
-  local dir = vim.fs.dirname(fn.expand('#' .. buf .. ':p'))
-  vim.cmd('Hexplore ' .. dir)
-end, { desc = 'Open netrw file browser for current buffer\'s directory' })
+-- MiniFiles file explorer
+nmap(
+  '<leader>e',
+  '<cmd>lua MiniFiles.open()<cr>',
+  { desc = 'Open MiniFiles file browser' }
+)
 
 -- Restart && restore nvim session
 nmap("<leader>re", function()

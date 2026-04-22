@@ -1,0 +1,3 @@
+[submodule "plugin/mini.files"]
+	path = lua/mini-files
+	url = https://github.com/nvim-mini/mini.files
