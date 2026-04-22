@@ -49,6 +49,7 @@ local function init()
   require 'align'
   vim.lsp.enable 'rust'
   vim.lsp.enable 'lua_ls'
+  vim.lsp.enable 'clangd'
 end
 
 -- Add ~/.local/share/nvim to rtp
@@ -206,7 +207,7 @@ api.nvim_create_autocmd('FileType', {
   callback = function(ev)
     if ts.language.add(ev.match) then
       ts.start(ev.buf, ev.match)
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      -- vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
   end
 })
@@ -258,5 +259,20 @@ api.nvim_create_autocmd({
     end
   end,
 })
+
+-- Make a scratch buffer
+api.nvim_create_user_command('Scratch', function()
+    vim.cmd 'bel 30new'
+    local buf = vim.api.nvim_get_current_buf()
+    for name, value in pairs {
+        filetype = 'scratch',
+        buftype = 'nofile',
+        bufhidden = 'wipe',
+        swapfile = false,
+        modifiable = true,
+    } do
+        vim.api.nvim_set_option_value(name, value, { buf = buf })
+    end
+end, { desc = 'Open a scratch buffer', nargs = 0 })
 
 init()
