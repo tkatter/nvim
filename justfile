@@ -48,6 +48,10 @@ neovim_prereqs := if distro == 'freebsd' {
 default:
   just --list
 
+[doc('grab submodules')]
+init: dirs
+  git submodule update --init
+
 # create directory structure
 [private]
 @dirs:
@@ -63,7 +67,7 @@ ts-list +KIND='all':
   set -euo pipefail
   if [[ '{{KIND}}' =~ quer|all ]]; then
     echo '{{YELLOW}}{{BOLD}}Queries:{{NORMAL}}'
-    ls -1 -R {{ts_queries_dir / '*'}} | awk '
+    ls -1 -R {{ts_queries_dir}}/* | awk '
       /^.*:/{
         sub(/.*\//, "")
         print "\033[32m"$NF"\033[0m"
