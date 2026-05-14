@@ -116,6 +116,10 @@ ghl('PmenuKind', {
   update = true,
 })
 
+-- Tab keymaps
+nmap('<leader>tt', ':tabnext<cr>', { desc = 'Next tab' })
+nmap('<leader>td', ':tabclose<cr>', { desc = 'Close tab' })
+
 -- Highlighting on yank actions (from :h vim.hl)
 api.nvim_create_autocmd('TextYankPost',
   { command = 'silent! lua vim.hl.on_yank { higroup="Visual" }' })
@@ -125,6 +129,7 @@ nmap('<C-s>', '<esc>:w<cr>',   { desc = 'Quick :w' })
 vmap('<C-s>', '<esc>:w<cr>gv', { desc = 'Quick :w' })
 
 -- Terminal things
+nmap('<leader>nt', ':tabnew<cr>:terminal<cr>', { desc = 'Open a terminal in a new tab' })
 tmap('<C-Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 tmap('<C-R>', "'<C-\\><C-N>\"'.nr2char(getchar()).'pi'",
   { expr = true, desc = 'Paste from register' })
