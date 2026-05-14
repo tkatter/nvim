@@ -189,6 +189,10 @@ install-nvim \
   echo '{{BLUE}}installing neovim build pre-requisites{{NORMAL}}'
   '{{sudo}}' '{{pkg_mgr}}' install -q -y {{neovim_prereqs}}
 
+  # ARCH="x86_64-pc-linux-gnu"
+  # GCC_VERSION="16.1.1"
+  # BINDGEN_EXTRA_CLANG_ARGS="-I/usr/lib/gcc/${ARCH}/${GCC_VERSION}/include" \
+  #   cargo install tree-sitter-cli --locked
   command -v tree-sitter &>/dev/null || { \
      echo '{{BLUE}}installing tree-sitter{{NORMAL}}'; \
     '{{cargo}}' install -q -f --locked tree-sitter-cli; }
