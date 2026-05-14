@@ -14,10 +14,13 @@ nvim_ts_repo := github_url + '/nvim-treesitter/nvim-treesitter.git'
 
 _no_win := assert(os() != 'windows', 'not supported')
 _os-id  := `grep ^ID= /etc/os-release | cut -d= -f 2`
+
 distro  := if _os-id =~ '(debian|ubuntu|linuxmint)' {
   'debian' 
 } else if _os-id =~ 'freebsd' {
   'freebsd'
+} else if _os-id =~ 'arch' {
+  'arch'
 } else {
   error('{{_os_id}} is not supported')
 }
@@ -30,6 +33,8 @@ pkg_mgr := if os() == 'freebsd' {
   require('pkg')
 } else if distro == 'debian' {
   require('apt-get')
+} else if distro == 'arch' {
+  require('pacman')
 } else if os() == 'macos' {
   require('brew')
 } else {
@@ -66,23 +71,32 @@ ts-list +KIND='all':
   #!/usr/bin/env bash
   set -euo pipefail
   if [[ '{{KIND}}' =~ quer|all ]]; then
-    echo '{{YELLOW}}{{BOLD}}Queries:{{NORMAL}}'
-    ls -1 -R {{ts_queries_dir}}/* | awk '
-      /^.*:/{
-        sub(/.*\//, "")
-        print "\033[32m"$NF"\033[0m"
-      }
-      /^.*\.scm$/{
-        print "  \033[34m"$0"\033[0m"
-      }'
+    if [ -d {{ts_queries_dir}} ]; then
+      echo '{{YELLOW}}{{BOLD}}Queries:{{NORMAL}}'
+      ls -1 -R {{ts_queries_dir}} | awk '
+        /^.*:/{
+          if ($0 ~ /queries/) next
+          sub(/.*\//, "")
+          print "\033[32m"$NF"\033[0m"
+        }
+        /^.*\.scm$/{
+          print "  \033[34m"$0"\033[0m"
+        }'
+    else
+      echo "{{BLUE}}[info]{{NORMAL}} no queries installed"
+    fi
   fi
 
   if [[ '{{KIND}}' =~ parser|all ]]; then
-    echo '{{YELLOW}}{{BOLD}}Parsers:{{NORMAL}}'
-    ls -l {{ts_parser_dir}} | awk '{
-      if (length($9) == 0) next
-      print "  \033[36m"$9"\033[0m -> \033[34m"$NF"\033[0m"
-    }'
+    if [ -d {{ts_parser_dir}} ]; then
+      echo '{{YELLOW}}{{BOLD}}Parsers:{{NORMAL}}'
+      ls -l {{ts_parser_dir}} | awk '{
+        if (length($9) == 0) next
+        print "  \033[36m"$9"\033[0m -> \033[34m"$NF"\033[0m"
+      }'
+    else
+      echo "{{BLUE}}[info]{{NORMAL}} no parsers installed"
+    fi
   fi
       
 [parallel]
