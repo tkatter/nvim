@@ -13,32 +13,32 @@ end
 
 ---@param rhs string
 ---@param lhs fun()|string
----@param opts vim.keymap.set.Opts|nil
 ---Set 'insert' mode keymap.
+---@param opts vim.keymap.set.Opts|nil
 local imap  = function(rhs, lhs, opts)
   map.set({'i'}, rhs, lhs, opts or {})
 end
 
+---Set 'visual' mode keymap.
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
----Set 'visual' mode keymap.
 local vmap  = function(rhs, lhs, opts)
   map.set({'v'}, rhs, lhs, opts or {})
 end
 
+---Set 'normal' mode keymap.
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
----Set 'normal' mode keymap.
 local nmap  = function(rhs, lhs, opts)
   map.set({'n'}, rhs, lhs, opts or {})
 end
 
+---Set 'terminal' mode keymap.
 ---@param rhs string
 ---@param lhs fun()|string
 ---@param opts vim.keymap.set.Opts|nil
----Set 'terminal' mode keymap.
 local tmap  = function(rhs, lhs, opts)
   map.set({'t'}, rhs, lhs, opts or {})
 end
@@ -47,6 +47,7 @@ local function init()
   require 'ui2'
   require 'diagnostics'
   require 'align'
+  require('tags').setup()
   vim.lsp.enable 'rust'
   vim.lsp.enable 'lua_ls'
   vim.lsp.enable 'clangd'
