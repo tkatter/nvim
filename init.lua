@@ -173,7 +173,7 @@ api.nvim_create_autocmd('FileType', {
     end
 
     vim.cmd [[
-      setlocal makeprg=shellcheck\ -f\ gcc\ %
+      setlocal makeprg=shellcheck\ -x\ -f\ gcc\ %
       setlocal shellpipe=2>&1\ >
     ]]
 
@@ -209,7 +209,7 @@ api.nvim_create_autocmd('FileType', {
 api.nvim_create_autocmd('FileType', {
   group    = augp_ts,
   desc     = 'Start treesitter',
-  pattern  = {'just', 'rust', 'python', 'javascript'},
+  pattern  = {'just', 'rust', 'python', 'javascript', 'elixir', 'heex'},
   callback = function(ev)
     if ts.language.add(ev.match) then
       ts.start(ev.buf, ev.match)
