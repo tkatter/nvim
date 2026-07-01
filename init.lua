@@ -59,6 +59,7 @@ vim.opt.rtp:prepend(fn.stdpath('data'))
 vim.o.ch  = 1
 vim.o.sw  = 2
 vim.o.et  = true
+vim.o.aw  = true
 vim.o.tgc = true
 vim.o.cc  = "80"
 vim.o.nu  = true

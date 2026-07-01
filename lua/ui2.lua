@@ -41,7 +41,7 @@ ui2.enable({
       timeout = 3000,
     },
     pager = {
-      height  = 0.5,
+      height  = 0.25,
     },
   },
 })
